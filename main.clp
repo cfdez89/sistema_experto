@@ -233,26 +233,31 @@
         
 
         (assert (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura))
+        (retract ?indice)
         (assert(nodoActual 7))
 )
 
 (defrule ordenaAcordePorAlturaPar1
         (nodoActual 7)
+        ?indice <- (nodoActual 7)
         ?indice <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
         (test (>  ?primerAltura ?segundaAltura))
         =>
         (assert(acorde ?segundaNota ?segundaAltura ?primerNota ?primerAltura ?tercerNota ?tercerAltura))
+        (retract ?indice)
         (retract ?indice)
         (assert(nodoActual 8))
 )
 
 (defrule ordenaAcordePorAlturaFinalPar2
         (nodoActual 8)
+        ?indice <- (nodoActual 8)
         ?indice <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
         (test (>  ?segundaAltura ?tercerAltura))
         =>
         (assert(acorde ?primerNota ?primerAltura ?tercerNota ?tercerAltura ?segundaNota ?segundaAltura ))
         (retract ?indice)
+        (assert(nodoActual 9))
 
 )
 
