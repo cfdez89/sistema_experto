@@ -21,6 +21,7 @@
 
 (deftemplate notacion
         (slot  nombre)
+        (slot altura)
 )
 
 (deftemplate nota
@@ -46,7 +47,7 @@
         =>
         (load-facts "intervalo.dat")
         (printout t crlf "Sistema Experto" crlf crlf
-                         "Indique el sistema de notacion que prefiere:" crlf  
+                         "Indique el sistema de notacion que prefiere:" crlf
                          "-Digite 1 para Italiana" crlf
                          "-Digite 2 para Inglesa" crlf
                          "-Mi opcion elegida es: "
@@ -59,14 +60,14 @@
         (notacionSeleccionada 1)
         =>
         (assert(nodoActual 1))
-       
+
 )
 
 (defrule esNotacionInglesa
         (notacionSeleccionada 2)
         =>
         (assert(nodoActual 2))
-     
+
 )
 
 (defrule esNotacionInvalida
@@ -75,7 +76,7 @@
         (test (not (eq ?notacion 2)))
         =>
         (assert(nodoActual -1))
-        
+
 )
 
 (defrule cargaItaliana
@@ -230,7 +231,7 @@
         (printout t "Digite la tercer altura: "
         );;;validar la forma de ingresar datos
         (bind ?tercerAltura (read))
-        
+
 
         (assert (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura))
         (retract ?indice)
