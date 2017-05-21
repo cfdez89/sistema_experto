@@ -1,75 +1,285 @@
 (notacion
 	(nombre Cb)
+	(altura 2)
 )
 
 (notacion
 	(nombre C)
+	(altura 2)
 )
 
 (notacion
 	(nombre C#)
+	(altura 2)
 )
 
 (notacion
 	(nombre Db)
+	(altura 2)
 )
 
 (notacion
 	(nombre D)
+	(altura 2)
 )
 
 (notacion
 	(nombre D#)
+	(altura 2)
 )
 
 (notacion
 	(nombre Eb)
+	(altura 2)
 )
 
 (notacion
 	(nombre E)
+	(altura 2)
 )
 
 (notacion
 	(nombre Fb)
+	(altura 2)
 )
 
 (notacion
 	(nombre F)
+	(altura 2)
 )
 
 (notacion
 	(nombre F#)
+	(altura 2)
 )
 
 (notacion
 	(nombre Gb)
+	(altura 2)
 )
 
 (notacion
 	(nombre G)
+	(altura 2)
 )
 
 (notacion
 	(nombre G#)
+	(altura 2)
 )
 
 (notacion
 	(nombre Ab)
+	(altura 2)
 )
 
 (notacion
 	(nombre A)
+	(altura 2)
 )
 
 (notacion
 	(nombre A#)
+	(altura 2)
 )
 
 (notacion
 	(nombre Bb)
+	(altura 2)
 )
 
 (notacion
 	(nombre B)
+	(altura 2)
+)
+
+(notacion
+	(nombre Cb)
+	(altura 3)
+)
+
+(notacion
+	(nombre C)
+	(altura 3)
+)
+
+(notacion
+	(nombre C#)
+	(altura 3)
+)
+
+(notacion
+	(nombre Db)
+	(altura 3)
+)
+
+(notacion
+	(nombre D)
+	(altura 3)
+)
+
+(notacion
+	(nombre D#)
+	(altura 3)
+)
+
+(notacion
+	(nombre Eb)
+	(altura 3)
+)
+
+(notacion
+	(nombre E)
+	(altura 3)
+)
+
+(notacion
+	(nombre Fb)
+	(altura 3)
+)
+
+(notacion
+	(nombre F)
+	(altura 3)
+)
+
+(notacion
+	(nombre F#)
+	(altura 3)
+)
+
+(notacion
+	(nombre Gb)
+	(altura 3)
+)
+
+(notacion
+	(nombre G)
+	(altura 3)
+)
+
+(notacion
+	(nombre G#)
+	(altura 3)
+)
+
+(notacion
+	(nombre Ab)
+	(altura 3)
+)
+
+(notacion
+	(nombre A)
+	(altura 3)
+)
+
+(notacion
+	(nombre A#)
+	(altura 3)
+)
+
+(notacion
+	(nombre Bb)
+	(altura 3)
+)
+
+(notacion
+	(nombre B)
+	(altura 3)
+)
+
+
+(notacion
+	(nombre Cb)
+	(altura 4)
+)
+
+(notacion
+	(nombre C)
+	(altura 4)
+)
+
+(notacion
+	(nombre C#)
+	(altura 4)
+)
+
+(notacion
+	(nombre Db)
+	(altura 4)
+)
+
+(notacion
+	(nombre D)
+	(altura 4)
+)
+
+(notacion
+	(nombre D#)
+	(altura 4)
+)
+
+(notacion
+	(nombre Eb)
+	(altura 4)
+)
+
+(notacion
+	(nombre E)
+	(altura 4)
+)
+
+(notacion
+	(nombre Fb)
+	(altura 4)
+)
+
+(notacion
+	(nombre F)
+	(altura 4)
+)
+
+(notacion
+	(nombre F#)
+	(altura 4)
+)
+
+(notacion
+	(nombre Gb)
+	(altura 4)
+)
+
+(notacion
+	(nombre G)
+	(altura 4)
+)
+
+(notacion
+	(nombre G#)
+	(altura 4)
+)
+
+(notacion
+	(nombre Ab)
+	(altura 4)
+)
+
+(notacion
+	(nombre A)
+	(altura 4)
+)
+
+(notacion
+	(nombre A#)
+	(altura 4)
+)
+
+(notacion
+	(nombre Bb)
+	(altura 4)
+)
+
+(notacion
+	(nombre B)
+	(altura 4)
 )
