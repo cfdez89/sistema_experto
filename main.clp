@@ -240,11 +240,11 @@
 (defrule ordenaAcordePorAlturaPar1
         (nodoActual 7)
         ?indice <- (nodoActual 7)
-        ?indice <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
+        ?indiceAcorde <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
         (test (>  ?primerAltura ?segundaAltura))
         =>
         (assert(acorde ?segundaNota ?segundaAltura ?primerNota ?primerAltura ?tercerNota ?tercerAltura))
-        (retract ?indice)
+        (retract ?indiceAcorde)
         (retract ?indice)
         (assert(nodoActual 8))
 )
@@ -252,10 +252,11 @@
 (defrule ordenaAcordePorAlturaFinalPar2
         (nodoActual 8)
         ?indice <- (nodoActual 8)
-        ?indice <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
+        ?indiceAcorde <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
         (test (>  ?segundaAltura ?tercerAltura))
         =>
         (assert(acorde ?primerNota ?primerAltura ?tercerNota ?tercerAltura ?segundaNota ?segundaAltura ))
+        (retract ?indiceAcorde)
         (retract ?indice)
         (assert(nodoActual 9))
 
