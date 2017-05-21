@@ -1,21 +1,5 @@
 (notacion
-	(nombre E)
-)
-
-(notacion
-	(nombre F)
-)
-
-(notacion
-	(nombre G)
-)
-
-(notacion
-	(nombre A)
-)
-
-(notacion
-	(nombre B)
+	(nombre Cb)
 )
 
 (notacion
@@ -23,5 +7,69 @@
 )
 
 (notacion
+	(nombre C#)
+)
+
+(notacion
+	(nombre Db)
+)
+
+(notacion
 	(nombre D)
+)
+
+(notacion
+	(nombre D#)
+)
+
+(notacion
+	(nombre Eb)
+)
+
+(notacion
+	(nombre E)
+)
+
+(notacion
+	(nombre Fb)
+)
+
+(notacion
+	(nombre F)
+)
+
+(notacion
+	(nombre F#)
+)
+
+(notacion
+	(nombre Gb)
+)
+
+(notacion
+	(nombre G)
+)
+
+(notacion
+	(nombre G#)
+)
+
+(notacion
+	(nombre Ab)
+)
+
+(notacion
+	(nombre A)
+)
+
+(notacion
+	(nombre A#)
+)
+
+(notacion
+	(nombre Bb)
+)
+
+(notacion
+	(nombre B)
 )

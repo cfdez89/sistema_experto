@@ -1,21 +1,5 @@
 (notacion
-  (nombre Mi)
-)
-
-(notacion
-  (nombre Fa)
-)
-
-(notacion
-  (nombre Sol)
-)
-
-(notacion
-  (nombre La)
-)
-
-(notacion
-  (nombre Si)
+  (nombre Dob)
 )
 
 (notacion
@@ -23,5 +7,69 @@
 )
 
 (notacion
+  (nombre Do#)
+)
+
+(notacion
+  (nombre Reb)
+)
+
+(notacion
   (nombre Re)
+)
+
+(notacion
+  (nombre Re#)
+)
+
+(notacion
+  (nombre Mib)
+)
+
+(notacion
+  (nombre Mi)
+)
+
+(notacion
+	(nombre Fab)
+)
+
+(notacion
+  (nombre Fa)
+)
+
+(notacion
+  (nombre Fa#)
+)
+
+(notacion
+  (nombre Solb)
+)
+
+(notacion
+  (nombre Sol)
+)
+
+(notacion
+  (nombre Sol#)
+)
+
+(notacion
+  (nombre Lab)
+)
+
+(notacion
+  (nombre La)
+)
+
+(notacion
+  (nombre La#)
+)
+
+(notacion
+  (nombre Sib)
+)
+
+(notacion
+  (nombre Si)
 )
