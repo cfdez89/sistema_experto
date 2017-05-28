@@ -99,7 +99,6 @@
             (test (eq ?tonalidad 2)))
         =>
         (retract ?indice)
-        (printout t "tonalidad: " ?tonalidad)
 )
 
 ;;valida si el tipo de tonalidad seleccionada es no valida
@@ -110,8 +109,7 @@
         (and (not (test (eq ?tonalidad 1)))
              (not (test (eq ?tonalidad 2))))
         =>
-        (retract ?indiceNotacion)
-        (retract ?indice)
+        (retract ?indiceNotacion ?indice)
         (printout t "Error: La opcion para tonalidad no es valida: " tonalidad crlf crlf)
         (assert (notacionSeleccionada  ?notacion))
 )
@@ -136,7 +134,6 @@
         (notacion (indice ?) (nombre ?tonalidadIngresada) (altura ?))
         =>
         (retract ?indiceTonalidad)
-        (printout t "Tonalidad valida")
         (assert (acorde))
 )
 ;;si el nombre de la tonalidad no es validad imprime el error
@@ -145,8 +142,7 @@
         ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
         (not (notacion (indice ?) (nombre ?tonalidadIngresada) (altura ?)))
         =>
-        (retract ?indiceTonalidad)
-        (retract ?indice)
+        (retract ?indiceTonalidad ?indice)
         (printout t"Error: La tonalidad ingresada no es valida: " crlf crlf)
         (assert (tonalidadSeleccionada  ?tonalidad))
 )
@@ -233,6 +229,8 @@
 )
 ;;ordena la triada por nota
 ;;(defrule ordenarTriadaNota)
+
+
 
 ;;Ordenar la triada primero por altura
 ;;luego por notas
