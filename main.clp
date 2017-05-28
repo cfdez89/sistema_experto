@@ -35,6 +35,12 @@
         (slot nombre)
 )
 
+(deftemplate triada
+        (multislot acorde_1)
+        (multislot acorde_2)
+        (multislot acorde_3)
+)
+
 ;;===================== Regla Inicio ==========================
 (defrule main
 
@@ -63,7 +69,7 @@
         ?indice <- (notacionSeleccionada ?notacion)
         (or (test (eq ?notacion 1))
             (test (eq ?notacion 2)))
-        => 
+        =>
         (load-facts (str-cat "notacion_" ?notacion ".dat"))
         (printout t crlf "Indique como indicara la tonalidad:" crlf
                          "-Digite 1 para nombre" crlf
@@ -117,15 +123,13 @@
         (bind ?nombreTonalidad (read))
         (assert (tonalidad ?nombreTonalidad))
 )
-
+;;falta
 (defrule esTonalidadPorAlteraciones
         (tonalidadSeleccionada 2)
         =>
         (assert(nodoActual 5))
 )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;validad si el nombre de la tonalidad ingresada es valida
-;;
 (defrule esTonalidadNombreValido
         (tonalidad ?tonalidadIngresada)
         ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
@@ -148,7 +152,7 @@
 )
 
 
-;;Tonalidad Alteraciones
+;;Tonalidad Alteraciones falta
 (defrule obtenerTonalidadPorAlteraciones
         (nodoActual 5)
         ?indice <- (nodoActual 5)
@@ -160,7 +164,7 @@
         (assert (tonalidad ?numeroAlteraciones ?tipoAlteracion ))
         (retract ?indice);;;jjjj
 )
-
+;;falta
 (defrule esTonalidadAlteracionValido
         (tonalidad ?numero ?alteracion)
         (test (> ?numero -1))
@@ -170,19 +174,19 @@
         =>
         (assert (nodoActual 6))
 )
-;;Validación de un Rango
+;;Validación de un Rango falta
 (defrule esTonalidadAlteracionInvalido
         (tonalidad ?numero ?alteracion)
-  (or (not (and (test (> ?numero -1))
-                (test (< ?numero 8))))
-            (not (or (test (eq ?alteracion b))
-                     (test (eq ?alteracion #)))))
+        (or (not (and (test (> ?numero -1))
+                 (test (< ?numero 8))))
+                 (not (or (test (eq ?alteracion b))
+                          (test (eq ?alteracion #)))))
         =>
         (printout t"Error: La tonalidad ingresada no es valida: " crlf crlf)
 )
-;;Acorde pedir la triada
+;;obtiene los datos para formar la triada
 (defrule obtenerAcorde
-        ?indice <- (acorde)   
+        ?indice <- (acorde) ;;revisar si se cambia
         =>
         (printout t crlf "Ahora formemos el acorde!" crlf)
         (printout t crlf "-Digite la primer nota: ");;;validar la forma de ingresar datos
@@ -198,48 +202,38 @@
         (printout t "-Digite la tercer altura: ");;;validar la forma de ingresar datos
         (bind ?tercerAltura (read))
         (retract ?indice)
-        (assert (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura))
-        (assert(nodoActual 7))
+        (assert (alturas ?primerAltura ?segundaAltura ?tercerAltura))
+        (assert (acorde ?primerNota ?primerAltura)
+                (acorde ?segundaNota ?segundaAltura)
+                (acorde ?tercerNota ?tercerAltura)
+        )
 )
-
-(defrule ordenarAcordeAltura
-        ?h1 <- (listaOrdenada $?r)
-        ?h2 <- (indices ?x $?d)
-        (not (indices ?y&:(< ?y ?x) $?))
+;;ordena las alturas de menor a mayor
+(defrule ordenarAlturas
+  ?indice <- (alturas $?ini ?num1 ?num2 $?fin)
+  (test (> ?num1 ?num2))
+  =>
+  (assert (alturas $?ini ?num2 ?num1 $?fin))
+  (retract ?indice)
+)
+;;crea una triada con 3 acordes, ordenada por su altura
+(defrule ordenarTriadaAltura
+        (declare (salience -10))
+        ?indiceAltura <- (alturas ?primerAltura ?segundaAltura ?tercerAltura)
+        ?indiceAcorde1 <- (acorde ?primerNota ?primerAltura)
+        ?indiceAcorde2 <- (acorde ?segundaNota ?segundaAltura)
+        ?indiceAcorde3 <- (acorde ?tercerNota ?tercerAltura)
         =>
-        (retract ?h1 ?h2)
-        (assert (listaOrdenada $?r ?x) (indices ?d))
+        (assert (triada (acorde_1 ?primerNota ?primerAltura)
+                        (acorde_2 ?segundaNota ?segundaAltura)
+                        (acorde_3 ?tercerNota ?tercerAltura)
+                )
+        )
+        (retract ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
 )
+;;ordena la triada por nota
+;;(defrule ordenarTriadaNota)
 
-(defrule ordenaAcordePorAlturaPar1
-        ?indice <- (nodoActual 7)
-        ?indiceAcorde <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
-        (test (>  ?primerAltura ?segundaAltura))
-        =>
-        (assert(acorde ?segundaNota ?segundaAltura ?primerNota ?primerAltura ?tercerNota ?tercerAltura))
-        (retract ?indiceAcorde)
-        (retract ?indice)
-        (assert(nodoActual 8))
-)
-
-(defrule ordenaAcordePorAlturaFinalPar2
-        (nodoActual 8)
-        ?indice <- (nodoActual 8)
-        ?indiceAcorde <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
-        (test (>  ?segundaAltura ?tercerAltura))
-        =>
-        (assert(acorde ?primerNota ?primerAltura ?tercerNota ?tercerAltura ?segundaNota ?segundaAltura ))
-        (retract ?indiceAcorde)
-        (retract ?indice)
-        (assert(nodoActual 9))
-
-)
-
-(defrule esAcordeValido
-        (acorde ?primerNota ?primerAltura  ?segundaNota ?segundaAltura  ?tercerNota ?tercerAltura)
-        =>
-        (printout t "Valido el acorde"crlf)
-)
 ;;Ordenar la triada primero por altura
 ;;luego por notas
 
