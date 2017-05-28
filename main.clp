@@ -20,8 +20,9 @@
 )
 
 (deftemplate notacion
+        (slot  indice)
         (slot  nombre)
-        (slot altura)
+        (slot  altura)
 )
 
 (deftemplate nota
@@ -30,101 +31,91 @@
         (slot sistemaTonal)
 )
 
-(deftemplate circuloQuintas
-        (slot nombre);;falta definir props
+(deftemplate bemoles
+        (slot nombre)
 )
-
 
 ;;===================== Regla Inicio ==========================
 (defrule main
 
         =>
-        (assert (nodoActual 0))
+        (assert (start))
 )
-
+;;obtiene el tipo de notacion a usar en el sistema
 (defrule obtenerNotacion
-        (nodoActual 0)
+        ?indice <- (start)
         =>
-        (load-facts "intervalo.dat")
+        ;;(load-facts "intervalo.dat")
         (printout t crlf "Sistema Experto" crlf crlf
                          "Indique el sistema de notacion que prefiere:" crlf
-                         "-Digite 1 para Italiana" crlf
-                         "-Digite 2 para Inglesa" crlf
+                         "-Digite 1 para Inglesa" crlf
+                         "-Digite 2 para Italiana" crlf
                          "-Mi opcion elegida es: "
         )
         (bind ?tipoNotacion (read))
         (assert(notacionSeleccionada ?tipoNotacion))
-)
-
-(defrule esNotacionItaliana
-        (notacionSeleccionada 1)
-        =>
-        (assert(nodoActual 1))
-
-)
-
-(defrule esNotacionInglesa
-        (notacionSeleccionada 2)
-        =>
-        (assert(nodoActual 2))
-
-)
-
-(defrule esNotacionInvalida
-        (notacionSeleccionada ?notacion)
-        (test (not (eq ?notacion 1)))
-        (test (not (eq ?notacion 2)))
-        =>
-        (assert(nodoActual -1))
-
-)
-
-(defrule cargaItaliana
-        (nodoActual 1)
-        ?indice <- (nodoActual 1)
-        =>
-        (load-facts "notacionItaliana.dat")
         (retract ?indice)
-        (assert (nodoActual 3))
 )
-
-(defrule cargaInglesa
-        (nodoActual 2)
-        ?indice <- (nodoActual 2)
-        =>
-        (load-facts "notacionInglesa.dat")
-        (retract ?indice)
-        (assert (nodoActual 3))
-)
-
-(defrule errorNotacion
-        (nodoActual -1)
-        ?indice <- (nodoActual -1)
-        =>
-        (printout t "Error Notacion")
-        (retract ?indice)
-        (assert (nodoActual 0))
-)
-
-;;TONALIDAD
-(defrule obtenerTipoTonalidad
-        (nodoActual 3)
-        ?indice <- (nodoActual 3)
-        =>
+;;cargar notacion seleccionada por el usuario si es valida
+;;1 para italiana, 2 para inglesa
+;;obtiene el tipo de tonalidad
+(defrule esOpcionNotacionValida
+        ?indice <- (notacionSeleccionada ?notacion)
+        (or (test (eq ?notacion 1))
+            (test (eq ?notacion 2)))
+        => 
+        (load-facts (str-cat "notacion_" ?notacion ".dat"))
         (printout t crlf "Indique como indicara la tonalidad:" crlf
-                         "Digite 1 para nombre" crlf
-                         "Digite 2 para numero y tipo de alteraciones" crlf
+                         "-Digite 1 para nombre" crlf
+                         "-Digite 2 para numero y tipo de alteraciones" crlf
                          "Mi opcion elegida es: "
         )
         (bind ?tipoTonalidad (read))
         (assert(tonalidadSeleccionada ?tipoTonalidad))
+)
+;;valida si el tipo de notacion seleccionada es no valida
+;;envia a estado de error si se cumple
+(defrule esOpcionNotacionInvalida
+        ?indice <- (notacionSeleccionada ?notacion)
+        (and (not (test (eq ?notacion 1)))
+             (not (test (eq ?notacion 2))))
+        =>
         (retract ?indice)
+        (printout t"Error: La notacion no es valida" crlf crlf)
+        (assert (start))
+)
+;;valida si el tipo de tonalidad seleccionada es valida
+;;1 para nombre, 2 para numero y tipo de alteracion
+(defrule esOpcionTonalidadValida
+        (tonalidadSeleccionada ?tonalidad)
+        ?indice <- (notacionSeleccionada ?notacion)
+        (or (test (eq ?tonalidad 1))
+            (test (eq ?tonalidad 2)))
+        =>
+        (retract ?indice)
+        (printout t "tonalidad: " ?tonalidad)
 )
 
+;;valida si el tipo de tonalidad seleccionada es no valida
+;;envia a estado de error si se cumple
+(defrule esOpcionTonalidadInvalida
+        ?indice <- (tonalidadSeleccionada  ?tonalidad)
+        ?indiceNotacion <- (notacionSeleccionada ?notacion)
+        (and (not (test (eq ?tonalidad 1)))
+             (not (test (eq ?tonalidad 2))))
+        =>
+        (retract ?indiceNotacion)
+        (retract ?indice)
+        (printout t "Error: La opcion para tonalidad no es valida: " tonalidad crlf crlf)
+        (assert (notacionSeleccionada  ?notacion))
+)
+;;obtiene el nombre de la tonalidad ingresada
 (defrule esTonalidadPorNombre
         (tonalidadSeleccionada 1)
         =>
-        (assert(nodoActual 4))
+        (printout t crlf "-Digite el nombre de la tonalidad:")
+        (bind ?nombreTonalidad (read))
+        (assert (tonalidad ?nombreTonalidad))
 )
 
 (defrule esTonalidadPorAlteraciones
@@ -132,47 +123,28 @@
         =>
         (assert(nodoActual 5))
 )
-
-(defrule esTonalidadInvalida
-        (tonalidadSeleccionada ?tonalidad)
-        (test (not (eq ?tonalidad 1)))
-        (test (not (eq ?tonalidad 2)))
-        =>
-        (assert(nodoActual -2))
-)
-
-(defrule errorTonalidad
-        (nodoActual -2)
-        ?indice <- (nodoActual -2)
-        =>
-        (printout t "Error Tonalidad")
-        (retract ?indice)
-        (assert (nodoActual 3))
-)
-
-;;Tonalidad Por Nombre
-(defrule obtenerTonalidadPorNombre
-        (nodoActual 4)
-        ?indice <- (nodoActual 4)
-        =>
-        (printout t "Digite el nombre de la tonalidad:")
-        (bind ?nombreTonalidad (read))
-        (assert (tonalidad ?nombreTonalidad))
-        (retract ?indice)
-)
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;validad si el nombre de la tonalidad ingresada es valida
+;;
 (defrule esTonalidadNombreValido
         (tonalidad ?tonalidadIngresada)
-        (notacion (nombre ?tonalidadIngresada))
+        ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
+        (notacion (indice ?) (nombre ?tonalidadIngresada) (altura ?))
         =>
-        (assert (nodoActual 6))
+        (retract ?indiceTonalidad)
+        (printout t "Tonalidad valida")
+        (assert (acorde))
 )
-
+;;si el nombre de la tonalidad no es validad imprime el error
 (defrule esTonalidadNombreInvalido
-        (tonalidad ?tonalidadIngresada)
-        (not (notacion (nombre ?tonalidadIngresada)))
+        ?indice <- (tonalidad ?tonalidadIngresada)
+        ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
+        (not (notacion (indice ?) (nombre ?tonalidadIngresada) (altura ?)))
         =>
-        (printout t "ERROR NOMBRE TONALIDAD INVALIDO" crlf)
+        (retract ?indiceTonalidad)
+        (retract ?indice)
+        (printout t"Error: La tonalidad ingresada no es valida: " crlf crlf)
+        (assert (tonalidadSeleccionada  ?tonalidad))
 )
 
 
@@ -181,9 +153,9 @@
         (nodoActual 5)
         ?indice <- (nodoActual 5)
         =>
-        (printout t "Digite el numero de alteraciones, rango [0,7]:"crlf)
+        (printout t "-Digite el numero de alteraciones, rango [0,7]:"crlf)
         (bind ?numeroAlteraciones (read))
-        (printout t "Digite el tipo de alteracion:"crlf)
+        (printout t "-Digite el tipo de alteracion:"crlf)
         (bind ?tipoAlteracion (read))
         (assert (tonalidad ?numeroAlteraciones ?tipoAlteracion ))
         (retract ?indice);;;jjjj
@@ -202,44 +174,44 @@
 (defrule esTonalidadAlteracionInvalido
         (tonalidad ?numero ?alteracion)
   (or (not (and (test (> ?numero -1))
-                        (test (< ?numero 8))))
+                (test (< ?numero 8))))
             (not (or (test (eq ?alteracion b))
-                                   (test (eq ?alteracion #)))))
+                     (test (eq ?alteracion #)))))
         =>
-        (printout t "ERROR NUMERO INVALIDO" crlf)
+        (printout t"Error: La tonalidad ingresada no es valida: " crlf crlf)
 )
 ;;Acorde pedir la triada
 (defrule obtenerAcorde
-        (nodoActual 6)
-        ?indice <- (nodoActual 6)
+        ?indice <- (acorde)   
         =>
-        (printout t "Digite la primer nota: "
-        );;;validar la forma de ingresar datos
+        (printout t crlf "Ahora formemos el acorde!" crlf)
+        (printout t crlf "-Digite la primer nota: ");;;validar la forma de ingresar datos
         (bind ?primerNota (read))
-        (printout t "Digite la primera altura: "
-        );;;validar la forma de ingresar datos
+        (printout t "-Digite la primera altura: ");;;validar la forma de ingresar datos
         (bind ?primerAltura (read))
-        (printout t "Digite la segunda nota: "
-        );;;validar la forma de ingresar datos
+        (printout t "-Digite la segunda nota: ");;;validar la forma de ingresar datos
         (bind ?segundaNota (read))
-        (printout t "Digite la segunda altura: "
-        );;;validar la forma de ingresar datos
+        (printout t "-Digite la segunda altura: ");;;validar la forma de ingresar datos
         (bind ?segundaAltura (read))
-        (printout t "Digite la tercer nota: "
-        );;;validar la forma de ingresar datos
+        (printout t "-Digite la tercer nota: ");;;validar la forma de ingresar datos
         (bind ?tercerNota (read))
-        (printout t "Digite la tercer altura: "
-        );;;validar la forma de ingresar datos
+        (printout t "-Digite la tercer altura: ");;;validar la forma de ingresar datos
         (bind ?tercerAltura (read))
-
-
-        (assert (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura))
         (retract ?indice)
+        (assert (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura))
         (assert(nodoActual 7))
 )
 
+(defrule ordenarAcordeAltura
+        ?h1 <- (listaOrdenada $?r)
+        ?h2 <- (indices ?x $?d)
+        (not (indices ?y&:(< ?y ?x) $?))
+        =>
+        (retract ?h1 ?h2)
+        (assert (listaOrdenada $?r ?x) (indices ?d))
+)
+
 (defrule ordenaAcordePorAlturaPar1
-        (nodoActual 7)
         ?indice <- (nodoActual 7)
         ?indiceAcorde <- (acorde ?primerNota ?primerAltura ?segundaNota ?segundaAltura ?tercerNota ?tercerAltura)
         (test (>  ?primerAltura ?segundaAltura))
@@ -267,8 +239,6 @@
         (acorde ?primerNota ?primerAltura  ?segundaNota ?segundaAltura  ?tercerNota ?tercerAltura)
         =>
         (printout t "Valido el acorde"crlf)
-        ;;;(retract ?indice)borrar nodo
-        ;;(assert (nodoActual 7))
 )
 ;;Ordenar la triada primero por altura
 ;;luego por notas
