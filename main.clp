@@ -206,10 +206,10 @@
 )
 ;;ordena las alturas de menor a mayor
 (defrule ordenarAlturas
-  ?indice <- (alturas $?ini ?num1 ?num2 $?fin)
+  ?indice <- (alturas $?inicio ?num1 ?num2 $?fin)
   (test (> ?num1 ?num2))
   =>
-  (assert (alturas $?ini ?num2 ?num1 $?fin))
+  (assert (alturas $?inicio ?num2 ?num1 $?fin))
   (retract ?indice)
 )
 ;;crea una triada con 3 acordes, ordenada por su altura
