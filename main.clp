@@ -245,13 +245,21 @@
         )
         (retract ?indiceNotas ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
 )
-
+;;carga la escala de notas de la tonalidad en sostenidos
 (defrule usarNotasSostenidos
         (tonalidad ?tonalidad)
         (notacion (indice ?indice) (nombre ?tonalidad) (altura ?))
         (test (> ?indice 0))
         =>
         (load-facts "sostenidos.dat")
+)
+;;carga la escala de notas de la tonalidad en bemoles
+(defrule usarNotasBemoles
+        (tonalidad ?tonalidad)
+        (notacion (indice ?indice) (nombre ?tonalidad) (altura ?))
+        (test (> ?indice 0))
+        =>
+        (load-facts "bemoles.dat")
 )
 
 (defrule ordenarNotasDisponibles
@@ -282,10 +290,6 @@
         ?indice <- (notas ?cabeza $?cola)
         ?indiceErrores <- (notasInvalidas $?notasInvalidas)
         (escalaMayor $?escala)
-        ;;(triada (acorde_1 ?primerNota ?primerAltura)
-          ;;      (acorde_2 ?segundaNota ?segundaAltura)
-            ;;    (acorde_3 ?tercerNota ?tercerAltura)
-        ;;)
         (test (> (length$ $?escala) 0))
         (not (escalaMayor $?inicio ?cabeza $?fin))
         =>
