@@ -1,2 +1,2 @@
 # Sistema Experto
-Sistema experto para detectar acordes mayores desarrollado en clips
+Sistema experto para detectar acordes mayores con respecto a una tonalidad dada, desarrollado en clips
