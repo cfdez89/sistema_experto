@@ -31,25 +31,29 @@
         (slot sistemaTonal)
 )
 
-(deftemplate bemoles
-        (slot nombre)
-)
-
 (deftemplate triada
         (multislot acorde_1)
         (multislot acorde_2)
         (multislot acorde_3)
 )
 
+(deftemplate notasDisponibles
+        (multislot notas)
+)
+
+(deftemplate notasDisponibleOrdenadas
+        (multislot notas)
+)
+
 ;;===================== Regla Inicio ==========================
 (defrule main
 
         =>
-        (assert (start))
+        (assert (inicio))
 )
 ;;obtiene el tipo de notacion a usar en el sistema
 (defrule obtenerNotacion
-        ?indice <- (start)
+        ?indice <- (inicio)
         =>
         ;;(load-facts "intervalo.dat")
         (printout t crlf "Sistema Experto" crlf crlf
@@ -88,7 +92,7 @@
         =>
         (retract ?indice)
         (printout t"Error: La notacion no es valida" crlf crlf)
-        (assert (start))
+        (assert (inicio))
 )
 ;;valida si el tipo de tonalidad seleccionada es valida
 ;;1 para nombre, 2 para numero y tipo de alteracion
@@ -199,22 +203,36 @@
         (bind ?tercerAltura (read))
         (retract ?indice)
         (assert (alturas ?primerAltura ?segundaAltura ?tercerAltura))
+        (assert (notas ?primerNota  ?segundaNota ?tercerNota))
         (assert (acorde ?primerNota ?primerAltura)
                 (acorde ?segundaNota ?segundaAltura)
                 (acorde ?tercerNota ?tercerAltura)
         )
 )
+;;verifica que las alturas dadas se encuentren entre [2, 5]
+;;(defrule validarAlturas
+  ;;;      ?indiceAlturas <- (alturasTmp $?inicio ?altura $?fin)
+    ;;    (test (> ?altura 1))
+      ;;  (test (< ?altura 6))
+        ;;=>
+      ;;  (assert (alturasTmp $?inicio ?altura $?fin))
+      ;;  (retract ?indiceAlturas)
+
+;;)
 ;;ordena las alturas de menor a mayor
 (defrule ordenarAlturas
-  ?indice <- (alturas $?inicio ?num1 ?num2 $?fin)
+  ?indiceNotas <- (notas $?notas);;podria declararse la lista de errores en deffacts y preguntar aca si es 0
+  (test (> (length$ $?notas) 0))
+  ?indiceAlturas <- (alturas $?inicio ?num1 ?num2 $?fin)
   (test (> ?num1 ?num2))
   =>
   (assert (alturas $?inicio ?num2 ?num1 $?fin))
-  (retract ?indice)
+  (retract ?indiceAlturas)
 )
 ;;crea una triada con 3 acordes, ordenada por su altura
 (defrule ordenarTriadaAltura
-        (declare (salience -10))
+        ?indiceNotas <- (notas $?notas)
+        (test (= (length$ $?notas) 0))
         ?indiceAltura <- (alturas ?primerAltura ?segundaAltura ?tercerAltura)
         ?indiceAcorde1 <- (acorde ?primerNota ?primerAltura)
         ?indiceAcorde2 <- (acorde ?segundaNota ?segundaAltura)
@@ -225,8 +243,106 @@
                         (acorde_3 ?tercerNota ?tercerAltura)
                 )
         )
-        (retract ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
+        (retract ?indiceNotas ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
 )
+
+(defrule usarNotasSostenidos
+        (tonalidad ?tonalidad)
+        (notacion (indice ?indice) (nombre ?tonalidad) (altura ?))
+        (test (> ?indice 0))
+        =>
+        (load-facts "sostenidos.dat")
+)
+
+(defrule ordenarNotasDisponibles
+        (tonalidad ?tonalidad)
+        ?indice <- (notasDisponibles(notas $?inicio ?tonalidad $?fin))
+        =>
+        (assert (notasDisponibleOrdenadas (notas ?tonalidad $?fin $?inicio)))
+        (retract ?indice)
+)
+
+(defrule generarEscalaMayor
+        (notasDisponibleOrdenadas (notas ?n1 ?n2 ?n3 ?n4 ?n5 ?n6 ?n7 ?n8 ?n9 ?n10 ?n11 ?n12))
+        =>
+        (assert (escalaMayor ?n1 ?n3 ?n5 ?n7 ?n8 ?n10 ?n12))
+        (assert (notasInvalidas))
+)
+;;verifica que las notas de los acordes pertenezcan a la escala de la tonalidad
+(defrule notasEnEscalaValido
+        ?indice <- (notas ?cabeza $?cola)
+        (escalaMayor $?inicio ?cabeza $?fin)
+        =>
+        (retract ?indice)
+        (assert (notas $?cola))
+)
+;;verifica que las notas de los acordes no pertenezcan a la escala de la tonalidad
+;;agrega las notas que no pertenezcan a una lista de notas no validas
+(defrule notasEnEscalaInvalido
+        ?indice <- (notas ?cabeza $?cola)
+        ?indiceErrores <- (notasInvalidas $?notasInvalidas)
+        (escalaMayor $?escala)
+        ;;(triada (acorde_1 ?primerNota ?primerAltura)
+          ;;      (acorde_2 ?segundaNota ?segundaAltura)
+            ;;    (acorde_3 ?tercerNota ?tercerAltura)
+        ;;)
+        (test (> (length$ $?escala) 0))
+        (not (escalaMayor $?inicio ?cabeza $?fin))
+        =>
+        (retract ?indice ?indiceErrores)
+        (assert (notasInvalidas $?notasInvalidas ?cabeza))
+        (assert (notas $?cola))
+)
+;;imprime en pantalla las notas que no pertenecen a la escala
+;;de la tonalidad dada, se redirige a un menu de opciones
+(defrule mostrarNotasEnEscalaInvalido
+        (notasInvalidas $?notas)
+        (test (> (length$ $?notas) 0))
+        (tonalidad ?tonalidad)
+        =>
+        (printout t crlf "Error: Las siguientes notas no son válidas en la escala de " ?tonalidad ":" crlf )
+        (printout t  $?notas crlf crlf)
+)
+;;verifica las distancias entre los acordes para saber si la triada
+;;es una ecala mayor con respecto a la tonalidad dada
+(defrule esAcordeMayorValido
+        (notasDisponibleOrdenadas (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (test (= (- (member$ ?primerNota $?notas) 1) 0))
+        (test (= (- (member$ ?segundaNota $?notas) 1) 4))
+        (test (= (- (member$ ?tercerNota $?notas) 1) 7))
+        =>
+        (printout t "Es acorde mayor "crlf crlf)
+
+)
+;;verifica las distancias entre los acordes para saber si la triada
+;;no es una ecala mayor con respecto a la tonalidad dada
+(defrule esAcordeMayorInvalido
+        (notasDisponibleOrdenadas (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (or (not (test (= (- (member$ ?primerNota $?notas) 1) 0)))
+            (not (test (= (- (member$ ?segundaNota $?notas) 1) 4)))
+            (not (test (= (- (member$ ?tercerNota $?notas) 1) 7)))
+        )
+        =>
+        (printout t "Es acorde no es valido "crlf crlf)
+
+)
+;;link de funciones clips
+;;;https://www.csie.ntu.edu.tw/~sylee/courses/clips/rhs.htm
+
+;;falta verificar que la altura asociada sea correcta
+
+
+
 ;;ordena la triada por nota
 ;;(defrule ordenarTriadaNota)
 
