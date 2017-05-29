@@ -344,6 +344,7 @@
 ;;;https://www.csie.ntu.edu.tw/~sylee/courses/clips/rhs.htm
 
 ;;falta verificar que la altura asociada sea correcta
+;;verificar que si se divide en 2 xq es muy larga la distancia
 
 
 
