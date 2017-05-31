@@ -70,7 +70,7 @@
 ;;1 para italiana, 2 para inglesa
 ;;obtiene el tipo de tonalidad
 (defrule esOpcionNotacionValida
-        ?indice <- (notacionSeleccionada ?notacion)
+        (notacionSeleccionada ?notacion)
         (or (test (eq ?notacion 1))
             (test (eq ?notacion 2)))
         =>
@@ -94,24 +94,13 @@
         (printout t"Error: La notacion no es valida" crlf crlf)
         (assert (inicio))
 )
-;;valida si el tipo de tonalidad seleccionada es valida
-;;1 para nombre, 2 para numero y tipo de alteracion
-(defrule esOpcionTonalidadValida
-        (tonalidadSeleccionada ?tonalidad)
-        ?indice <- (notacionSeleccionada ?notacion)
-        (or (test (eq ?tonalidad 1))
-            (test (eq ?tonalidad 2)))
-        =>
-        (retract ?indice)
-)
-
 ;;valida si el tipo de tonalidad seleccionada es no valida
 ;;envia a estado de error si se cumple
 (defrule esOpcionTonalidadInvalida
         ?indice <- (tonalidadSeleccionada  ?tonalidad)
         ?indiceNotacion <- (notacionSeleccionada ?notacion)
         (and (not (test (eq ?tonalidad 1)))
-             (not (test (eq ?tonalidad 2))))
+            (not (test (eq ?tonalidad 2))))
         =>
         (retract ?indiceNotacion ?indice)
         (printout t "Error: La opcion para tonalidad no es valida: " tonalidad crlf crlf)
@@ -125,11 +114,16 @@
         (bind ?nombreTonalidad (read))
         (assert (tonalidad ?nombreTonalidad))
 )
-;;falta
+;;obtiene el tipo de alteracion y el numero de ellas,
+;;acorde a una tonalidad
 (defrule esTonalidadPorAlteraciones
         (tonalidadSeleccionada 2)
         =>
-        (assert(nodoActual 5))
+        (printout t "-Digite el numero de alteraciones, rango [0,7]:"crlf)
+        (bind ?numeroAlteraciones (read))
+        (printout t "-Digite el tipo de alteracion (b ó #):"crlf)
+        (bind ?tipoAlteracion (read))
+        (assert (tonalidad ?numeroAlteraciones ?tipoAlteracion))
 )
 ;;validad si el nombre de la tonalidad ingresada es valida
 (defrule esTonalidadNombreValido
@@ -151,19 +145,6 @@
         (assert (tonalidadSeleccionada  ?tonalidad))
 )
 
-
-;;Tonalidad Alteraciones falta
-(defrule obtenerTonalidadPorAlteraciones
-        (nodoActual 5)
-        ?indice <- (nodoActual 5)
-        =>
-        (printout t "-Digite el numero de alteraciones, rango [0,7]:"crlf)
-        (bind ?numeroAlteraciones (read))
-        (printout t "-Digite el tipo de alteracion:"crlf)
-        (bind ?tipoAlteracion (read))
-        (assert (tonalidad ?numeroAlteraciones ?tipoAlteracion ))
-        (retract ?indice);;;jjjj
-)
 ;;falta
 (defrule esTonalidadAlteracionValido
         (tonalidad ?numero ?alteracion)
@@ -244,22 +225,26 @@
                 )
         )
         (retract ?indiceNotas ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
-)
+);;############################################
 ;;carga la escala de notas de la tonalidad en sostenidos
 (defrule usarNotasSostenidos
+        ?indiceTipoNotacion <- (notacionSeleccionada ?notacion)
         (tonalidad ?tonalidad)
         (notacion (indice ?indice) (nombre ?tonalidad) (altura ?))
         (test (> ?indice 0))
         =>
-        (load-facts "sostenidos.dat")
+        (load-facts (str-cat "sostenidos_" ?notacion ".dat"))
+        (retract ?indiceTipoNotacion)
 )
 ;;carga la escala de notas de la tonalidad en bemoles
 (defrule usarNotasBemoles
+        ?indiceTipoNotacion <- (notacionSeleccionada ?notacion)
         (tonalidad ?tonalidad)
         (notacion (indice ?indice) (nombre ?tonalidad) (altura ?))
-        (test (> ?indice 0))
+        (test (< ?indice 0))
         =>
-        (load-facts "bemoles.dat")
+        (load-facts (str-cat "bemoles_" ?notacion ".dat"))
+        (retract ?indiceTipoNotacion)
 )
 
 (defrule ordenarNotasDisponibles
