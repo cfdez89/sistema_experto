@@ -148,22 +148,31 @@
 ;;falta
 (defrule esTonalidadAlteracionValido
         (tonalidad ?numero ?alteracion)
+        ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
         (test (> ?numero -1))
         (test (< ?numero 8))
         (or (test (eq ?alteracion b))
             (test (eq ?alteracion #)))
         =>
-        (assert (nodoActual 6))
+        (retract ?indiceTonalidad);;buscar cual tonalidad es en el circulo de quintas
+        ;;(assert (acorde))
 )
 ;;Validación de un Rango falta
 (defrule esTonalidadAlteracionInvalido
-        (tonalidad ?numero ?alteracion)
+        ?indice <- (tonalidad ?numero ?alteracion)
+        ?indiceTonalidad <- (tonalidadSeleccionada  ?tonalidad)
         (or (not (and (test (> ?numero -1))
-                 (test (< ?numero 8))))
-                 (not (or (test (eq ?alteracion b))
-                          (test (eq ?alteracion #)))))
+                      (test (< ?numero 8)))
+            )
+            (not (and (test (eq ?alteracion b))
+                     (test (eq ?alteracion #))
+                  )
+            )
+        )
         =>
-        (printout t"Error: La tonalidad ingresada no es valida: " crlf crlf)
+        (retract ?indiceTonalidad ?indice)
+        (printout t"Error: El numero ó el tipo de alteración no es valida" crlf crlf)
+        (assert (tonalidadSeleccionada  ?tonalidad))
 )
 ;;obtiene los datos para formar la triada
 (defrule obtenerAcorde
