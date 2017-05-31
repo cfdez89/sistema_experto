@@ -202,13 +202,13 @@
 ;;)
 ;;ordena las alturas de menor a mayor
 (defrule ordenarAlturas
-  ?indiceNotas <- (notas $?notas);;podria declararse la lista de errores en deffacts y preguntar aca si es 0
-  (test (> (length$ $?notas) 0))
-  ?indiceAlturas <- (alturas $?inicio ?num1 ?num2 $?fin)
-  (test (> ?num1 ?num2))
-  =>
-  (assert (alturas $?inicio ?num2 ?num1 $?fin))
-  (retract ?indiceAlturas)
+        ?indiceNotas <- (notas $?notas);;podria declararse la lista de errores en deffacts y preguntar aca si es 0
+        (test (> (length$ $?notas) 0))
+        ?indiceAlturas <- (alturas $?inicio ?num1 ?num2 $?fin)
+        (test (> ?num1 ?num2))
+        =>
+        (assert (alturas $?inicio ?num2 ?num1 $?fin))
+        (retract ?indiceAlturas)
 )
 ;;crea una triada con 3 acordes, ordenada por su altura
 (defrule ordenarTriadaAltura
@@ -225,7 +225,7 @@
                 )
         )
         (retract ?indiceNotas ?indiceAltura ?indiceAcorde1 ?indiceAcorde2 ?indiceAcorde3)
-);;############################################
+)
 ;;carga la escala de notas de la tonalidad en sostenidos
 (defrule usarNotasSostenidos
         ?indiceTipoNotacion <- (notacionSeleccionada ?notacion)
