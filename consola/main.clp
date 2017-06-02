@@ -246,6 +246,7 @@
 ;;obtiene los datos para formar la triada
 (defrule obtenerAcorde
         ?indice <- (acorde) ;;revisar si se cambia
+        (notasDisponibles (notas $?listaNotas))
         =>
         (printout t crlf "Ahora formemos el acorde!" crlf)
         (printout t crlf "-Digite la primer nota: ");;;validar la forma de ingresar datos
@@ -262,10 +263,13 @@
         (bind ?tercerAltura (read))
         (retract ?indice)
         (assert (notas ?primerNota  ?segundaNota ?tercerNota));;es para luego ordenarlas
-        (assert (alturas ?primerAltura ?segundaAltura ?tercerAltura))
-        (assert (acorde ?primerNota ?primerAltura)
-                (acorde ?segundaNota ?segundaAltura)
-                (acorde ?tercerNota ?tercerAltura)
+        (bind ?resultado_1 (+ (* ?primerAltura 12) (member$ ?primerNota $?listaNotas)))
+        (bind ?resultado_2 (+ (* ?segundaAltura 12) (member$ ?segundaNota $?listaNotas)))
+        (bind ?resultado_3 (+ (* ?tercerAltura 12) (member$ ?tercerNota $?listaNotas)))
+        (assert (alturas ?resultado_1 ?resultado_2 ?resultado_3))
+        (assert (acorde ?primerNota ?primerAltura ?resultado_1)
+                (acorde ?segundaNota ?segundaAltura ?resultado_2)
+                (acorde ?tercerNota ?tercerAltura ?resultado_3)
         )
 )
 ;;verifica que las notas de los acordes pertenezcan a la escala de la tonalidad
@@ -311,18 +315,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;crea una triada con 3 acordes, ordenada por su altura
 ;;cuando sus los 3 acordes tienen altura distinta
-(defrule ordenarTriadaAlturas
+(defrule ordenarTriadaAlturas;;hacer otra para que agarre la vara y de error
         (notas $?notas)
         (test (= (length$ $?notas) 0))
-        ?indiceAltura <- (alturas ?primerAltura ?segundaAltura ?tercerAltura)
-        (and (test (<= ?primerAltura ?segundaAltura))
-             (test (<= ?segundaAltura ?tercerAltura))
+        ?indiceAltura <- (alturas ?resultado_1 ?resultado_2 ?resultado_3)
+        (and (test (< ?resultado_1 ?resultado_2))
+             (test (< ?resultado_2 ?resultado_3))
         )
-        ?indiceAcorde1 <- (acorde ?primerNota ?primerAltura)
-        ?indiceAcorde2 <- (acorde ?segundaNota ?segundaAltura)
-        ?indiceAcorde3 <- (acorde ?tercerNota ?tercerAltura)
+        ?indiceAcorde1 <- (acorde ?primerNota ?primerAltura ?resultado_1)
+        ?indiceAcorde2 <- (acorde ?segundaNota ?segundaAltura ?resultado_2)
+        ?indiceAcorde3 <- (acorde ?tercerNota ?tercerAltura ?resultado_3)
         =>
-        ;;(assert (notas ?primerNota  ?segundaNota ?tercerNota))
         (assert (triada (acorde_1 ?primerNota ?primerAltura)
                         (acorde_2 ?segundaNota ?segundaAltura)
                         (acorde_3 ?tercerNota ?tercerAltura)
@@ -370,6 +373,25 @@
         (test (= (- (member$ ?tercerNota $?notas) 1) 7))
         =>
         (printout t clrf "Es acorde menor "crlf crlf)
+)
+;;verifica las distancias entre los acordes para saber si la triada
+;;es la primer inversion de la escala mayor con respecto a la tonalidad dada
+(defrule esAcordePrimerInversionValido
+        (tonalidad ?tonalidad)
+        (notasPorPrimerNota (notas $?notasDisponibles))
+        (test (> (length$ $?notasDisponibles) 0))
+        (notasPorPrimerNota (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (test (= (- (member$ ?tonalidad $?notasDisponibles) 1) 8))
+        (test (= (- (member$ ?primerNota $?notas) 1) 0))
+        (test (= (- (member$ ?segundaNota $?notas) 1) 3))
+        (test (= (- (member$ ?tercerNota $?notas) 1) 8))
+        =>
+        (printout t clrf "Es la primera inversion del acorde mayor "crlf crlf)
 )
 
 
