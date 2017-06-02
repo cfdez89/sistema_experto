@@ -42,8 +42,8 @@
 
 (notacion
     (indice 0)
-	(nombre C)
-	(altura 2)
+	  (nombre C)
+	  (altura 2)
 )
 
 (notacion

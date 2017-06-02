@@ -1,7 +1,7 @@
 (notacion
     (indice -7)
-	(nombre Dob)
-	(altura 2)
+	  (nombre Dob)
+	  (altura 2)
 )
 
 (notacion
