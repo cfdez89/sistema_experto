@@ -393,10 +393,25 @@
         =>
         (printout t clrf "Es la primera inversion del acorde mayor "crlf crlf)
 )
-
-
-
-
+;;verifica las distancias entre los acordes para saber si la triada
+;;es la segunda inversion de la escala mayor con respecto a la tonalidad dada
+(defrule esAcordeSegundaInversionValido
+        (tonalidad ?tonalidad)
+        (notasPorPrimerNota (notas $?notasDisponibles))
+        (test (> (length$ $?notasDisponibles) 0))
+        (notasPorPrimerNota (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (test (= (- (member$ ?tonalidad $?notasDisponibles) 1) 5))
+        (test (= (- (member$ ?primerNota $?notas) 1) 0))
+        (test (= (- (member$ ?segundaNota $?notas) 1) 5))
+        (test (= (- (member$ ?tercerNota $?notas) 1) 9))
+        =>
+        (printout t clrf "Es la segunda inversion del acorde mayor "crlf crlf)
+)
 
 
 
