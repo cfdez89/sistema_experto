@@ -58,7 +58,7 @@
   (gradoNota iii Mediante 3)
   (gradoNota IV Subdominante 4)
   (gradoNota V Dominante 5)
-  (gradoNota vi SuperDominante 6)
+  (gradoNota vi Superdominante 6)
   (gradoNota vi^i Sensible 7)
 )
 
