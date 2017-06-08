@@ -251,7 +251,7 @@
         =>
         (assert (escalaMayor ?n1 ?n3 ?n5 ?n6 ?n8 ?n10 ?n12))
         (assert (notasInvalidas))
-        (printout t crlf "Escala: " ?n1 ?n3 ?n5 ?n6 ?n8 ?n10 ?n12 crlf)
+        (printout t crlf "Escala: " ?n1 "" ?n3 "" ?n5 "" ?n6 "" ?n8 "" ?n10 "" ?n12 crlf)
         (assert (acorde))
 
 )
