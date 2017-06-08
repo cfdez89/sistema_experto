@@ -1,0 +1,35 @@
+(gradoNota
+    (nombre Tónica)
+    (simbolo I)
+    (valor 1)
+)
+(gradoNota
+    (nombre Supertónica)
+    (simbolo ii)
+    (valor 2)
+)
+(gradoNota
+    (nombre Mediante)
+    (simbolo iii)
+    (valor 3)
+)
+(gradoNota
+    (nombre Subdominante)
+    (simbolo IV)
+    (valor 4)
+)
+(gradoNota
+    (nombre Dominante)
+    (simbolo V)
+    (valor 5)
+)
+(gradoNota
+    (nombre SuperDominante)
+    (simbolo vi)
+    (valor 6)
+)
+(gradoNota
+    (nombre Sensible)
+    (simbolo vi^i)
+    (valor 7)
+)

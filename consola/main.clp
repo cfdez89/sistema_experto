@@ -53,6 +53,13 @@
 ;;indicar que el acorde no es valido, en caso de ser 1 significa que si es valido
 (deffacts estadoInicial
   (esValido 0)
+  (gradoNota I Tónica 1)
+  (gradoNota ii Supertónica 2)
+  (gradoNota iii Mediante 3)
+  (gradoNota IV Subdominante 4)
+  (gradoNota V Dominante 5)
+  (gradoNota vi SuperDominante 6)
+  (gradoNota vi^i Sensible 7)
 )
 
 ;;===================== Regla Inicio ==========================
@@ -433,11 +440,28 @@
 ;;determina el grado de la nota en la escala, solo si el acorde es valido (esValido 1)
 ;;se debe calcular la distancia que existe entre la tonalidad
 ;;y la tonica
-;;(defrule calcularGradoNota
-  ;;(esValido 1)
-  ;;=>
+(defrule calcularGradoNota
+        (esValido 1)
+        (escalaMayor $?escala)
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        =>
+        (bind ?valor (member$ ?primerNota $?escala))
+        (assert  (valorGrado ?valor))
 
-;;)
+)
+;;imprime el grado de la nota y su nombre
+(defrule imprimirGradoNota
+        (valorGrado ?valor)
+        (gradoNota ?simbolo ?nombre ?valor)
+        =>
+        (printout t crlf "El acorde es valido con respecto a la tonalidad, " ?simbolo " - " ?nombre crlf crlf)
+
+)
+
+
 
 
 
