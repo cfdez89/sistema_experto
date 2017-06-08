@@ -457,7 +457,7 @@
         (valorGrado ?valor)
         (gradoNota ?simbolo ?nombre ?valor)
         =>
-        (printout t crlf ?simbolo " - " ?nombre crlf crlf)
+        (printout t ?simbolo " - " ?nombre crlf crlf)
 
 )
 ;;captura si el acorde no es valido
