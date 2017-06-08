@@ -48,6 +48,12 @@
 (deftemplate notasPorPrimerNota
         (multislot notas)
 )
+;;estado inicial del programa
+;;se define un estado con valor 0 por default para
+;;indicar que el acorde no es valido, en caso de ser 1 significa que si es valido
+(deffacts estadoInicial
+  (esValido 0)
+)
 
 ;;===================== Regla Inicio ==========================
 (defrule main
@@ -347,6 +353,7 @@
 ;;verifica las distancias entre los acordes para saber si la triada
 ;;es una escala mayor con respecto a la tonalidad dada
 (defrule esAcordeMayorValido
+        ?indice <- (esValido 0)
         (notasPorPrimerNota (notas $?notas))
         (test (> (length$ $?notas) 0))
         (triada (acorde_1 ?primerNota ?primerAltura)
@@ -357,11 +364,14 @@
         (test (= (- (member$ ?segundaNota $?notas) 1) 4))
         (test (= (- (member$ ?tercerNota $?notas) 1) 7))
         =>
-        (printout t clrf "Es acorde mayor "crlf crlf)
+        (retract ?indice)
+        (assert (esValido 1))
+        (printout t crlf "Es acorde mayor "crlf crlf)
 )
 ;;verifica las distancias entre los acordes para saber si la triada
 ;;es una escala menor con respecto a la tonalidad dada
 (defrule esAcordeMenorValido
+        ?indice <- (esValido 0)
         (notasPorPrimerNota (notas $?notas))
         (test (> (length$ $?notas) 0))
         (triada (acorde_1 ?primerNota ?primerAltura)
@@ -372,11 +382,14 @@
         (test (= (- (member$ ?segundaNota $?notas) 1) 3))
         (test (= (- (member$ ?tercerNota $?notas) 1) 7))
         =>
-        (printout t clrf "Es acorde menor "crlf crlf)
+        (retract ?indice)
+        (assert (esValido 1))
+        (printout t crlf "Es acorde menor "crlf crlf)
 )
 ;;verifica las distancias entre los acordes para saber si la triada
 ;;es la primer inversion de la escala mayor con respecto a la tonalidad dada
 (defrule esAcordePrimerInversionValido
+        ?indice <- (esValido 0)
         (tonalidad ?tonalidad)
         (notasPorPrimerNota (notas $?notasDisponibles))
         (test (> (length$ $?notasDisponibles) 0))
@@ -391,11 +404,14 @@
         (test (= (- (member$ ?segundaNota $?notas) 1) 3))
         (test (= (- (member$ ?tercerNota $?notas) 1) 8))
         =>
-        (printout t clrf "Es la primera inversion del acorde mayor "crlf crlf)
+        (retract ?indice)
+        (assert (esValido 1))
+        (printout t crlf "Es la primera inversion del acorde mayor "crlf crlf)
 )
 ;;verifica las distancias entre los acordes para saber si la triada
 ;;es la segunda inversion de la escala mayor con respecto a la tonalidad dada
 (defrule esAcordeSegundaInversionValido
+        ?indice <- (esValido 0)
         (tonalidad ?tonalidad)
         (notasPorPrimerNota (notas $?notasDisponibles))
         (test (> (length$ $?notasDisponibles) 0))
@@ -410,45 +426,23 @@
         (test (= (- (member$ ?segundaNota $?notas) 1) 5))
         (test (= (- (member$ ?tercerNota $?notas) 1) 9))
         =>
-        (printout t clrf "Es la segunda inversion del acorde mayor "crlf crlf)
+        (retract ?indice)
+        (assert (esValido 1))
+        (printout t crlf "Es la segunda inversion del acorde mayor "crlf crlf)
 )
-
-
-
-
-;;verifica que las alturas dadas se encuentren entre [2, 5]
-;;(defrule validarAlturas
-  ;;;      ?indiceAlturas <- (alturasTmp $?inicio ?altura $?fin)
-    ;;    (test (> ?altura 1))
-      ;;  (test (< ?altura 6))
-        ;;=>
-      ;;  (assert (alturasTmp $?inicio ?altura $?fin))
-      ;;  (retract ?indiceAlturas)
+;;determina el grado de la nota en la escala, solo si el acorde es valido (esValido 1)
+;;se debe calcular la distancia que existe entre la tonalidad
+;;y la tonica
+;;(defrule calcularGradoNota
+  ;;(esValido 1)
+  ;;=>
 
 ;;)
-;;ordena las alturas de menor a mayor
+
+
+
+
+
 
 ;;link de funciones clips
-;;;https://www.csie.ntu.edu.tw/~sylee/courses/clips/rhs.htm
-
-;;falta verificar que la altura asociada sea correcta
-;;verificar que si se divide en 2 xq es muy larga la distancia
-
-
-
-;;ordena la triada por nota
-;;(defrule ordenarTriadaNota)
-
-
-
-;;Ordenar la triada primero por altura
-;;luego por notas
-
-;;Buscar cual es la tónica-> la de 0 semitonos.
-;;Busca la dominante->4 semitonos con respecto a la tonalidad.
-;;Buscar la pentatonica-> 7 semitonos
-
-;;Si cumple lo anterior es que es un acorde mayor
-;;Otra regla que haga lo mismo, pero para las inversiones.
-
-;;Como programar la regla para las otras escalas
+;;https://www.csie.ntu.edu.tw/~sylee/courses/clips/rhs.htm
