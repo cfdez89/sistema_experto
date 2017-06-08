@@ -457,7 +457,7 @@
         (valorGrado ?valor)
         (gradoNota ?simbolo ?nombre ?valor)
         =>
-        (printout t crlf "El acorde es valido con respecto a la tonalidad, " ?simbolo " - " ?nombre crlf crlf)
+        (printout t crlf "El acorde es válido con respecto a la tonalidad, " ?simbolo " - " ?nombre crlf crlf)
 
 )
 ;;captura si el acorde no es valido
