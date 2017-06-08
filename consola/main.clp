@@ -394,6 +394,24 @@
         (printout t crlf "Es acorde menor "crlf crlf)
 )
 ;;verifica las distancias entre los acordes para saber si la triada
+;;es una escala menor con respecto a la tonalidad dada
+(defrule esAcordeDisminuidoValido
+        ?indice <- (esValido 0)
+        (notasPorPrimerNota (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (test (= (- (member$ ?primerNota $?notas) 1) 0))
+        (test (= (- (member$ ?segundaNota $?notas) 1) 3))
+        (test (= (- (member$ ?tercerNota $?notas) 1) 6))
+        =>
+        (retract ?indice)
+        (assert (esValido 1))
+        (printout t crlf "Es acorde disminuido "crlf crlf)
+)
+;;verifica las distancias entre los acordes para saber si la triada
 ;;es la primer inversion de la escala mayor con respecto a la tonalidad dada
 (defrule esAcordePrimerInversionValido
         ?indice <- (esValido 0)
@@ -412,7 +430,7 @@
         (test (= (- (member$ ?tercerNota $?notas) 1) 8))
         =>
         (retract ?indice)
-        (assert (esValido 1))
+        (assert (esValido 2))
         (printout t crlf "Es la primera inversion del acorde mayor "crlf crlf)
 )
 ;;verifica las distancias entre los acordes para saber si la triada
@@ -434,7 +452,7 @@
         (test (= (- (member$ ?tercerNota $?notas) 1) 9))
         =>
         (retract ?indice)
-        (assert (esValido 1))
+        (assert (esValido 2))
         (printout t crlf "Es la segunda inversion del acorde mayor "crlf crlf)
 )
 ;;determina el grado de la nota en la escala, solo si el acorde es valido (esValido 1)
