@@ -460,6 +460,40 @@
         (printout t crlf "El acorde es valido con respecto a la tonalidad, " ?simbolo " - " ?nombre crlf crlf)
 
 )
+;;captura si el acorde no es valido
+(defrule noEsAcorde
+        (esValido 0)
+        (tonalidad ?tonalidad)
+        (notasPorPrimerNota (notas $?notasDisponibles))
+        (test (> (length$ $?notasDisponibles) 0))
+        (notasPorPrimerNota (notas $?notas))
+        (test (> (length$ $?notas) 0))
+        (triada (acorde_1 ?primerNota ?primerAltura)
+                (acorde_2 ?segundaNota ?segundaAltura)
+                (acorde_3 ?tercerNota ?tercerAltura)
+        )
+        (or (or (not (test (= (- (member$ ?primerNota $?notas) 1) 0)))
+                (not (test (= (- (member$ ?segundaNota $?notas) 1) 4)))
+                (not (test (= (- (member$ ?tercerNota $?notas) 1) 7)))
+            )
+            (or (not (test (= (- (member$ ?primerNota $?notas) 1) 0)))
+                (not (test (= (- (member$ ?segundaNota $?notas) 1) 3)))
+                (not (test (= (- (member$ ?tercerNota $?notas) 1) 7)))
+            )
+            (or (not (test (= (- (member$ ?tonalidad $?notasDisponibles) 1) 8)))
+                (not (test (= (- (member$ ?primerNota $?notas) 1) 0)))
+                (not (test (= (- (member$ ?segundaNota $?notas) 1) 3)))
+                (not (test (= (- (member$ ?tercerNota $?notas) 1) 8)))
+            )
+            (or (not (test (= (- (member$ ?tonalidad $?notasDisponibles) 1) 5)))
+                (not (test (= (- (member$ ?primerNota $?notas) 1) 0)))
+                (not (test (= (- (member$ ?segundaNota $?notas) 1) 5)))
+                (not (test (= (- (member$ ?tercerNota $?notas) 1) 9)))
+            )
+        )
+        =>
+        (printout t crlf "El acorde  no es válido con respecto a la tonalidad" crlf crlf)
+)
 
 
 
